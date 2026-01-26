@@ -1,0 +1,49 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Django Stripe Shop</title>
+    <link rel="stylesheet" href="{% static 'shop/style.css' %}">
+</head>
+<body>
+
+<h1>🛒 Products</h1>
+
+{% for product in products %}
+<form method="post" action="{% url 'checkout' %}" class="product-card">
+    {% csrf_token %}
+
+    <p class="product-name">
+        <strong>{{ product.name }}</strong>
+        - ₹{{ product.ui_price|floatformat:2 }}
+
+    </p>
+
+    <input type="hidden" name="product_id" value="{{ product.id }}">
+
+    Quantity:
+    <input type="number" name="quantity" value="1" min="1" required>
+
+    <button type="submit">Buy</button>
+</form>
+{% endfor %}
+
+<h2>📦 My Orders</h2>
+
+{% if orders %}
+<ul class="orders">
+    {% for order in orders %}
+    <li>
+        Order ID: {{ order.order_id }} |
+        <!-- Amount Paid: ₹{{ order.amount|floatformat:2 }} -->
+        Amount Paid: ₹{{ order.ui_amount|floatformat:2 }}
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No orders yet.</p>
+{% endif %}
+
+</body>
+</html>
