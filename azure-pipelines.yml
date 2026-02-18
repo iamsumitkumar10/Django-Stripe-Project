@@ -2,7 +2,7 @@ trigger:
 - main   # change if your branch is different
 
 pool:
-  name: Default   # <-- your self-hosted agent pool name
+  name: my-agent   # <-- your self-hosted agent pool name
 
 steps:
 
