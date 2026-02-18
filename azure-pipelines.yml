@@ -1,52 +1,29 @@
 trigger:
-  branches:
-    include:
-      - main
+- main   # change if your branch is different
 
 pool:
-  name: 'my-agent'
+  name: Default   # <-- your self-hosted agent pool name
 
-variables:
-  pythonVersion: '3.11'
-  DJANGO_SETTINGS_MODULE: 'your_project.settings'
-  POSTGRES_DB: 'test_db'
-  POSTGRES_USER: 'postgres'
-  POSTGRES_PASSWORD: 'postgres'
-  POSTGRES_HOST: 'localhost'
-  POSTGRES_PORT: '5432'
+steps:
 
-stages:
-- stage: Build
-  displayName: Build and Test Django App
-  jobs:
-  - job: Build
-    displayName: Install and Test
-    steps:
+# Optional: show system info (helps debugging)
+- script: |
+    echo "Python version:"
+    python3 --version
+    echo "Pip version:"
+    python3 -m pip --version
+  displayName: Check Python
 
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '$(pythonVersion)'
-        addToPath: true
+# Create virtual environment and install dependencies
+- script: |
+    python3 -m venv venv
+    source venv/bin/activate
+    python -m pip install --upgrade pip
+    pip install -r requirements.txt
+  displayName: Install Dependencies
 
-    - script: |
-        python -m pip install --upgrade pip
-        pip install virtualenv
-        python -m virtualenv venv
-        source venv/bin/activate
-        pip install -r requirements.txt
-      displayName: Install dependencies
-
-    - script: |
-        source venv/bin/activate
-        python manage.py migrate
-      displayName: Run migrations
-
-    - script: |
-        source venv/bin/activate
-        python manage.py test
-      displayName: Run tests
-
-    - script: |
-        source venv/bin/activate
-        python manage.py collectstatic --noinput
-      displayName: Collect static files
+# Run tests using pytest
+- script: |
+    source venv/bin/activate
+    pytest
+  displayName: Run Tests
