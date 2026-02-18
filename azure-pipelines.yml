@@ -4,7 +4,7 @@ trigger:
       - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'my-agent'
 
 variables:
   pythonVersion: '3.11'
